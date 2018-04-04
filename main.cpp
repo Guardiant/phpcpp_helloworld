@@ -1,33 +1,30 @@
 #include <phpcpp.h>
 #include <iostream>
 
+//这是PHP里面可以调用的接口函数
 void say_hello()
 {
+	//输出一段欢迎文字
 	Php::out << "hello world from my first extension" << std::endl;
 }
 
 /**
- *  tell the compiler that the get_module is a pure C function
+ *  告诉编译器get_module是个纯C函数
  */
 extern "C" {
     
     /**
-     *  Function that is called by PHP right after the PHP process
-     *  has started, and that returns an address of an internal PHP
-     *  strucure with all the details and features of your extension
-     *
-     *  @return void*   a pointer to an address that is understood by PHP
+     *  本函数在PHP进程一打开就会被访问，并返回一个描述扩展信息的PHP结构指针
      */
     PHPCPP_EXPORT void *get_module() 
     {
-        // static(!) Php::Extension object that should stay in memory
-        // for the entire duration of the process (that's why it's static)
+        // 必须是static类型，因为扩展对象需要在PHP进程内常驻内存
         static Php::Extension extension("helloworld", "1.0.0");
         
-        // @todo    add your own functions, classes, namespaces to the extension
+        //这里可以添加你要暴露给PHP调用的函数
 		extension.add<say_hello>("say_hello");
 		
-        // return the extension
+        // 返回扩展对象指针
         return extension;
     }
 }
